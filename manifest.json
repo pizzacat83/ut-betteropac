@@ -1,0 +1,43 @@
+{
+    "manifest_version": 2,
+    "name": "UT-BetterOPAC",
+    "description": "東京大学OPACをより便利にする拡張機能。自動ログイン・自動延長・お気に入りの本の在架状況確認など。",
+    "version": "1.0",
+    "browser_action": {
+      "default_icon": "icon.png"
+    },
+    "icons": { "512": "icon.png" },
+    "options_page": "options.html",
+    "content_scripts": [
+      {
+        "run_at": "document_end",
+        "matches": [
+          "https://sts.adm.u-tokyo.ac.jp/adfs/ls/*"
+        ],
+        "js": [
+          "utlogin.js"
+        ]
+      },
+      {
+        "run_at": "document_end",
+        "matches": [
+          "*://opac.dl.itc.u-tokyo.ac.jp/*"
+        ],
+        "js": [
+          "jquery-3.3.1.min.js",
+          "opac_all.js"
+        ]
+      }
+    ],
+    "background": {
+      "scripts": ["background.js"]
+    },
+    "permissions": [
+      "*://opac.dl.itc.u-tokyo.ac.jp/*",
+      "https://gidp.adm.u-tokyo.ac.jp/*",
+      "https://sts.adm.u-tokyo.ac.jp/adfs/ls/*"
+    ],
+    "web_accessible_resources": [
+      "favorites.html"
+  ]
+  }
