@@ -97,7 +97,7 @@ function getConditions(bibid){
             xhr.send();
             let condition = xhr.responseText.replace(/[\(\[].*/, "");
             condition = condition ? condition : "在架";
-            if(temp[condition])temp[condition].append(locations[i]);else temp[condition] = [locations[i]];
+            if(temp[condition])temp[condition].push(locations[i]);else temp[condition] = [locations[i]];
         }
         let temp2 = [];
         for(let key in temp){
