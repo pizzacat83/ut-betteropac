@@ -32,7 +32,7 @@ $(function(){
         let query = "book-"+_;
         for(let i = 0; i < len; ++i){
             let row = $("<tr></tr>").addClass(query);
-            if(i === 0) row.append($("<td></td>").text(book.name).attr({rowspan: len}));
+            if(i === 0) row.append($("<td></td>").append($("<a></a>").attr("href", "https://opac.dl.itc.u-tokyo.ac.jp/opac/opac_link/bibid/"+book.bibid+"/").text(book.name)).attr({rowspan: len}));
             row.append($("<th></th>").text(conditions[i].campus));
             conditions[i].conditions = conditions[i].conditions.sort(sortFunc);
             let text = conditions[i].conditions.map((x)=>{return x.condition+": "+x.locations.join(" ");}).join("<br>");

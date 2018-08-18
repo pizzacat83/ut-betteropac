@@ -101,7 +101,7 @@ function getConditions(bibid){
         }
         let temp2 = [];
         for(let key in temp){
-            temp2.push({condition:key, locations:temp[key]});
+            temp2.push({condition:key, locations:Array.from(new Set(temp[key]))});
         }
         res.push({campus:campusName, conditions:temp2});
     }
