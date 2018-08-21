@@ -58,7 +58,7 @@ function login(){
                 let data=new FormData();
                 for(let i=0; i<f.elements.length; i++){
                 data.append(f.elements[i].name, f.elements[i].value);
-                }
+            }
                 let xhr2 = new XMLHttpRequest();
                 xhr2.open('POST', posturl, false);
                 xhr2.send(data);
@@ -70,6 +70,11 @@ function login(){
                     tabcnt=setInterval(function(id){
                         
                         chrome.tabs.get(id,(t)=>{
+                            if(!t){
+                                // tab deleted
+                                clearInterval(tabcnt);
+                                login_open = false;
+                            }
                             if(t.url&&t.url.substring(0,"https://opac.dl.itc.u-tokyo.ac.jp".length)=="https://opac.dl.itc.u-tokyo.ac.jp"&&t.status=="complete"){
                                 clearInterval(tabcnt);
                                 login_open = false;
