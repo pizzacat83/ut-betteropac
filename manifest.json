@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "UT-BetterOPAC",
     "description": "東京大学OPACをより便利にする拡張機能。自動ログイン・自動延長・お気に入りの本の在架状況確認など。",
-    "version": "1.0",
+    "version": "1.0.1",
     "browser_action": {
       "default_icon": "icon.png"
     },
