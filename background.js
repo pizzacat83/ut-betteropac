@@ -29,52 +29,61 @@ function is_loggedin(){
     }
 }
 
+let login_open = false;
+
 function login(){
-  let xhr = new XMLHttpRequest();
-  loginroot="https://opac.dl.itc.u-tokyo.ac.jp/opac/opac_search/?loginMode=disp&amp;lang=0&amp;opkey=&amp;cmode=0&amp;smode=0";
-  xhr.open('GET', loginroot, false);
-  xhr.send();
-  match = xhr.responseText.match(/<a onClick="back_opac\('(.+?)'\)"><img src=".+?" alt="login_shibboleth" \/>/)
-  if(match==null){
-    return;
-  }
-  loginurl=match[1].replace(/&amp;/g,"&")
-  xhr.open('GET',"https://opac.dl.itc.u-tokyo.ac.jp"+loginurl,true);
-  xhr.send();
-  xhr.onload = function (e) {
-    let formtext,loginurl;
-    if(xhr.responseText.match(/<form method="post" id="securelogin" action=".">(.+?)<\/form>/s)){ // eslint-disable-line no-invalid-regexp
-        formtext=xhr.responseText.match(/<form method="post" id="securelogin" action=".">(.+?)<\/form>/s)[1]; // eslint-disable-line no-invalid-regexp
-        posturl="https://opac.dl.itc.u-tokyo.ac.jp/opac/opac_search/";
-        let f=document.createElement("form");
-        f.style.display = 'none';
-        f.innerHTML=formtext;
-        let data=new FormData();
-        for(let i=0; i<f.elements.length; i++){
-        data.append(f.elements[i].name, f.elements[i].value);
+    if(!login_open){
+        login_open = true;
+
+        let xhr = new XMLHttpRequest();
+        loginroot="https://opac.dl.itc.u-tokyo.ac.jp/opac/opac_search/?loginMode=disp&amp;lang=0&amp;opkey=&amp;cmode=0&amp;smode=0";
+        xhr.open('GET', loginroot, false);
+        xhr.send();
+        match = xhr.responseText.match(/<a onClick="back_opac\('(.+?)'\)"><img src=".+?" alt="login_shibboleth" \/>/)
+        if(match==null){
+            login_open = false;
+            return;
         }
-        let xhr2 = new XMLHttpRequest();
-        xhr2.open('POST', posturl, false);
-        xhr2.send(data);
-    }else{
-        chrome.tabs.create({"url":xhr.responseURL,"active":false},
-        function(tab){
-            //console.log(tab.id);
-            tabcnt=setInterval(function(id){
-                
-                chrome.tabs.get(id,(t)=>{
-                    if(t.url&&t.url.substring(0,"https://opac.dl.itc.u-tokyo.ac.jp".length)=="https://opac.dl.itc.u-tokyo.ac.jp"&&t.status=="complete"){
-                        clearInterval(tabcnt);
-                        chrome.tabs.remove(id,()=>{});
-                    }
-                })
+        loginurl=match[1].replace(/&amp;/g,"&")
+        xhr.open('GET',"https://opac.dl.itc.u-tokyo.ac.jp"+loginurl,true);
+        xhr.send();
+        xhr.onload = function (e) {
+            let formtext,loginurl;
+            if(xhr.responseText.match(/<form method="post" id="securelogin" action=".">(.+?)<\/form>/s)){ // eslint-disable-line no-invalid-regexp
+                formtext=xhr.responseText.match(/<form method="post" id="securelogin" action=".">(.+?)<\/form>/s)[1]; // eslint-disable-line no-invalid-regexp
+                posturl="https://opac.dl.itc.u-tokyo.ac.jp/opac/opac_search/";
+                let f=document.createElement("form");
+                f.style.display = 'none';
+                f.innerHTML=formtext;
+                let data=new FormData();
+                for(let i=0; i<f.elements.length; i++){
+                data.append(f.elements[i].name, f.elements[i].value);
+                }
+                let xhr2 = new XMLHttpRequest();
+                xhr2.open('POST', posturl, false);
+                xhr2.send(data);
+                login_open = false;
+            }else{
+                chrome.tabs.create({"url":xhr.responseURL,"active":false},
+                function(tab){
+                    //console.log(tab.id);
+                    tabcnt=setInterval(function(id){
+                        
+                        chrome.tabs.get(id,(t)=>{
+                            if(t.url&&t.url.substring(0,"https://opac.dl.itc.u-tokyo.ac.jp".length)=="https://opac.dl.itc.u-tokyo.ac.jp"&&t.status=="complete"){
+                                clearInterval(tabcnt);
+                                login_open = false;
+                                chrome.tabs.remove(id,()=>{});
+                            }
+                        })
 
-            },100,tab.id);
-        });
+                    },100,tab.id);
+                });
 
+            }
+
+        };
     }
-
-  };
 }
 
 
